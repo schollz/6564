@@ -4,7 +4,7 @@
 s.waitForBoot({
 	Routine{
 		// set the bpm
-		var bpm=100;
+		var bpm=120;
 		var scale=Scale.major;
 		var octaves,octaves2;
 		var notes,notes2;
@@ -57,15 +57,16 @@ s.waitForBoot({
 		SynthDef("final",{
 			var snd=In.ar(0,2);
 			var pos,pos2;
-			var sndR = Greyhole.ar(snd);
-			//snd=SelectX.ar(0.16,[snd,sndR]);
+			// var sndR = Greyhole.ar(snd);
+			var sndR = Fverb.ar(snd[0],snd[1]);
+			snd=SelectX.ar(0.16,[snd,sndR]);
 			snd=AnalogTape.ar(snd,0.9,0.9,0.7,2);
 			snd=BPeakEQ.ar(snd,32.midicps,6);
 			// pos=Phasor.ar(1,1,0,BufFrames.ir(~tape));
 			// pos2=Phasor.ar(1,MouseX.kr(0.98,1),0,BufFrames.ir(~tape));
 			// BufWr.ar(snd,~tape,pos);
 			// snd=BufRd.ar(2,~tape,pos2-256);
-			SendReply.kr(Impulse.kr(10),'/mousex',MouseX.kr(0.25,1));
+			SendReply.kr(Impulse.kr(10),'/mousex',MouseX.kr(0.75,1.25));
 			ReplaceOut.ar(0,snd);
 		}).send(s);
 		s.sync;
@@ -73,7 +74,7 @@ s.waitForBoot({
 		s.sync;
 
 		o = OSCFunc({ |msg|
-			t.tempo=8*bpm/120*msg[3];
+			// t.tempo=8*bpm/120*msg[3];
 		}, '/mousex');
 		s.sync;
 
@@ -103,7 +104,7 @@ s.waitForBoot({
 			var note=scale[notes[i.mod(notes.size)].mod(scale.size)]+octaves[i.mod(octaves.size)]+32;
 			var accent=syncopation[i.mod(syncopation.size)];
 			[i,note-32,notes[i.mod(notes.size)],scale[notes[i.mod(notes.size)]]].postln;
-			Synth("jp",[\freq,note.midicps,\mix,(90+10.rand)/100,\detune,(25+30.rand)/100,\amp,accent,\lpf,18-(accent*12)]);
+			Synth("jp",[\freq,note.midicps,\mix,(90+10.rand)/100,\detune,(15+30.rand)/100,\amp,accent,\lpf,18-(accent*12)]);
 			1
 		});
 
